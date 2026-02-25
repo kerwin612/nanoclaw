@@ -119,7 +119,7 @@ function buildVolumeMounts(
     // rest from the host, enabling zero-copy host-auth passthrough.
     const configKeys = ['ANTHROPIC_BASE_URL', 'API_TIMEOUT_MS', 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC'];
     const apiConfig = { ...readHostClaudeEnv(configKeys), ...readEnvFile(configKeys) };
-    const settingsEnv: Record<string, string> = {{
+    const settingsEnv: Record<string, string> = {
       // Enable agent swarms (subagent orchestration)
       // https://code.claude.com/docs/en/agent-teams#orchestrate-teams-of-claude-code-sessions
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: '1',
