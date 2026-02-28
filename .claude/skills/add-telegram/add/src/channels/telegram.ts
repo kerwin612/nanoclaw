@@ -92,8 +92,7 @@ export class TelegramChannel implements Channel {
       }
 
       // Store chat metadata for discovery
-      const isGroup = ctx.chat.type === 'group' || ctx.chat.type === 'supergroup';
-      this.opts.onChatMetadata(chatJid, timestamp, chatName, 'telegram', isGroup);
+      this.opts.onChatMetadata(chatJid, timestamp, chatName);
 
       // Only deliver full message for registered groups
       const group = this.opts.registeredGroups()[chatJid];
@@ -136,8 +135,7 @@ export class TelegramChannel implements Channel {
         'Unknown';
       const caption = ctx.message.caption ? ` ${ctx.message.caption}` : '';
 
-      const isGroup = ctx.chat.type === 'group' || ctx.chat.type === 'supergroup';
-      this.opts.onChatMetadata(chatJid, timestamp, undefined, 'telegram', isGroup);
+      this.opts.onChatMetadata(chatJid, timestamp);
       this.opts.onMessage(chatJid, {
         id: ctx.message.message_id.toString(),
         chat_jid: chatJid,

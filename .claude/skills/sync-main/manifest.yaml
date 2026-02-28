@@ -1,0 +1,10 @@
+skill: sync-main
+version: 1.0.0
+description: "Rebuild origin/main from upstream/main + selected PR branches via squash-merge"
+core_version: 0.1.0
+adds:
+  - sync-main.sh
+modifies: []
+structured: {}
+conflicts: []
+depends: []

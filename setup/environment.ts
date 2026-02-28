@@ -27,30 +27,15 @@ export async function run(_args: string[]): Promise<void> {
     appleContainer = 'installed';
   }
 
-  // Check Docker with detailed diagnostics
-  let docker: 'running' | 'installed_not_running' | 'no_permission' | 'not_found' = 'not_found';
+  // Check Docker
+  let docker: 'running' | 'installed_not_running' | 'not_found' = 'not_found';
   if (commandExists('docker')) {
     try {
       const { execSync } = await import('child_process');
       execSync('docker info', { stdio: 'ignore' });
       docker = 'running';
-      logger.info('Docker is accessible');
-    } catch (e1) {
-      // Docker exists but `docker info` failed - diagnose why
-      logger.debug({ err: e1 }, 'docker info failed, diagnosing');
-      try {
-        // Check if docker daemon is running (with sudo)
-        const { execSync: execSync2 } = await import('child_process');
-        execSync2('sudo docker info', { stdio: 'ignore' });
-        // Daemon is running, so it's a permission issue
-        docker = 'no_permission';
-        logger.warn('Docker daemon is running but user lacks permission');
-      } catch (e2) {
-        // Daemon itself is not running
-        docker = 'installed_not_running';
-        logger.debug({ err: e2 }, 'sudo docker info also failed, daemon likely not running');
-        logger.warn('Docker is installed but daemon is not running');
-      }
+    } catch {
+      docker = 'installed_not_running';
     }
   }
 
@@ -58,7 +43,9 @@ export async function run(_args: string[]): Promise<void> {
   const hasEnv = fs.existsSync(path.join(projectRoot, '.env'));
 
   const authDir = path.join(projectRoot, 'store', 'auth');
-  const hasAuth = fs.existsSync(authDir) && fs.readdirSync(authDir).length > 0;
+  const hasAuth =
+    fs.existsSync(authDir) &&
+    fs.readdirSync(authDir).length > 0;
 
   let hasRegisteredGroups = false;
   // Check JSON file first (pre-migration)
@@ -70,9 +57,9 @@ export async function run(_args: string[]): Promise<void> {
     if (fs.existsSync(dbPath)) {
       try {
         const db = new Database(dbPath, { readonly: true });
-        const row = db
-          .prepare('SELECT COUNT(*) as count FROM registered_groups')
-          .get() as { count: number };
+        const row = db.prepare(
+          'SELECT COUNT(*) as count FROM registered_groups',
+        ).get() as { count: number };
         if (row.count > 0) hasRegisteredGroups = true;
         db.close();
       } catch {
@@ -81,18 +68,8 @@ export async function run(_args: string[]): Promise<void> {
     }
   }
 
-  logger.info(
-    {
-      platform,
-      wsl,
-      appleContainer,
-      docker,
-      hasEnv,
-      hasAuth,
-      hasRegisteredGroups,
-    },
-    'Environment check complete',
-  );
+  logger.info({ platform, wsl, appleContainer, docker, hasEnv, hasAuth, hasRegisteredGroups },
+    'Environment check complete');
 
   emitStatus('CHECK_ENVIRONMENT', {
     PLATFORM: platform,

@@ -31,6 +31,7 @@ Single Node.js process that connects to WhatsApp, routes messages to Claude Agen
 | `/update` | Pull upstream NanoClaw changes, merge with customizations, run migrations |
 | `/qodo-pr-resolver` | Fetch and fix Qodo PR review issues interactively or in batch |
 | `/get-qodo-rules` | Load org- and repo-level coding rules from Qodo before code tasks |
+| `/sync-main` | Rebuild origin/main = upstream/main + selected personal PR branches via squash-merge |
 
 ## Development
 
